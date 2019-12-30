@@ -1,0 +1,16 @@
+bin
+bindbg
+Debug
+Release
+mnist
+.vs
+*.pt
+*.dnn
+*.pb
+*.h5
+.hg
+*.dll
+*.orig
+*.pyc
+__pycache__
+*.swp

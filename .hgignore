@@ -1,0 +1,16 @@
+syntax: glob
+bin/
+bindbg/
+x64/Debug/
+x64/Release/
+mnist/
+.vs/
+*.pt
+*.dnn
+*.pb
+*.h5
+.git
+*.orig
+*.pyc
+__pycache__
+*.swp
