@@ -7,6 +7,7 @@ src_list= [
 ]
 
 ENABLE_CUDA=0
+ENABLE_HIP=0    # ROCm
 
 torch= tool.findPath( '../../libtorch', 'LIBTORCH_ROOT' )
 #------------------------------------------------------------------------------
@@ -17,12 +18,18 @@ if env.getHostPlatform() == 'Windows':
     env.addCCFlags( ['-wd4146','-wd4244','-wd4018','-wd4251','-wd4275','-wd4267','-wd4522','-wd4273'] )
     torch_debug= tool.findPath( '../../libtorchdbg', 'LIBTORCH_ROOT' )
 elif env.getHostPlatform() == 'Linux':
-    env.addCCFlags( [ '-frtti', '-fexceptions', '-D_GLIBCXX_USE_CXX11_ABI=0', '-std=c++14', ] )
+    env.addCCFlags( [ '-frtti', '-fexceptions', '-D_GLIBCXX_USE_CXX11_ABI=1', '-std=c++14', ] )
     torch_debug= torch
 
 env.addLibraries( [ 'c10', 'torch', ] )
+
 if ENABLE_CUDA:
     env.addLibraries( [ 'caffe2_nvrtc', 'c10_cuda', ] )
+if ENABLE_HIP:
+    env.addLibraries( [ 'c10_hip', 'torch_hip', ] )
+    if env.getHostPlatform() == 'Linux':
+        env.addLibraries( [ 'torch_cpu', ] )
+
 env.addIncludePaths( [
             os.path.join(torch,'include'),
             os.path.join(torch,'include/torch/csrc/api/include'),
