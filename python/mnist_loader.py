@@ -24,7 +24,7 @@ class MNistLoader:
                 self.mnist_data.append( fi.read() )
 
     def byteToFloat( self, data ):
-        float_data= np.zeros( 28*28, dtype='float' )
+        float_data= np.zeros( 28*28, dtype=np.float32 )
         for i,b in enumerate(data):
             float_data[i]= b/255.0
         return  float_data
@@ -49,23 +49,23 @@ class MNistLoader:
         return  int(label[8 + index])
 
     def getFloatLabel10( self, index ):
-        label= np.zeros( 10, dtype='float' )
+        label= np.zeros( 10, dtype=np.float32 )
         label[self.getLabel(index)]= 1.0
         return  label
 
     def getFloatLabel10Test( self, index ):
-        label= np.zeros( 10, dtype='float' )
+        label= np.zeros( 10, dtype=np.float32 )
         label[self.getLabelTest(index)]= 1.0
         return  label
 
     def getAll( self ):
-        x_train= np.ndarray( shape=(60000,1,28,28), dtype='float' )
-        y_train= np.ndarray( shape=(60000,10), dtype='float' )
+        x_train= np.ndarray( shape=(60000,1,28,28), dtype=np.float32 )
+        y_train= np.ndarray( shape=(60000,10), dtype=np.float32 )
         for i in range(60000):
             x_train[i]= self.getFloatImage( i ).reshape(1,28,28)
             y_train[i]= self.getFloatLabel10( i )
-        x_test= np.ndarray( shape=(10000,1,28,28), dtype='float' )
-        y_test= np.ndarray( shape=(10000,10), dtype='float' )
+        x_test= np.ndarray( shape=(10000,1,28,28), dtype=np.float32 )
+        y_test= np.ndarray( shape=(10000,10), dtype=np.float32 )
         for i in range(10000):
             x_test[i]= self.getFloatImageTest( i ).reshape(1,28,28)
             y_test[i]= self.getFloatLabel10Test( i )

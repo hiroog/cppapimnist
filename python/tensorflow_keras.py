@@ -1,28 +1,33 @@
+# 2019/12/30 Hiroyuki Ogasawara
 # vim:ts=4 sw=4 et:
 
-#import keras
+import os
+os.environ['KERAS_BACKEND']='tensorflow'
+
 import tensorflow.keras as keras
+from tensorflow.keras import models
+from tensorflow.keras import layers as l
 import numpy as np
 import mnist_loader
 
-# channels_first
 
+# channels_first + functional API + mse
 
 def test_train():
-    x0= keras.layers.Input( shape=(1,28,28) )
-    x= keras.layers.Conv2D( 16, (5,5), padding='valid', kernel_initializer='he_normal', activation='relu' )( x0 )
-    x= keras.layers.MaxPooling2D( pool_size=(2,2) )( x )
-    x= keras.layers.Dropout( 0.25 )( x )
-    x= keras.layers.Conv2D( 32, (5,5), padding='valid', kernel_initializer='he_normal', activation='relu' )( x )
-    x= keras.layers.MaxPooling2D( pool_size=(2,2) )( x )
-    x= keras.layers.Dropout( 0.25 )( x )
-    x= keras.layers.Flatten()( x )
-    x= keras.layers.Dense( 128, kernel_initializer='he_normal', activation='relu' )( x )
-    x= keras.layers.Dropout( 0.5 )( x )
-    x= keras.layers.Dense( 64, kernel_initializer='he_normal', activation='relu' )( x )
-    x= keras.layers.Dropout( 0.5 )( x )
-    x= keras.layers.Dense( 10, kernel_initializer='he_normal' )( x )
-    model= keras.models.Model( inputs=x0, outputs=x )
+    x0= l.Input( shape=(1,28,28) )
+    x= l.Conv2D( 16, (5,5), kernel_initializer='he_normal', activation='relu' )( x0 )
+    x= l.MaxPooling2D( pool_size=(2,2) )( x )
+    x= l.Dropout( 0.25 )( x )
+    x= l.Conv2D( 32, (5,5), kernel_initializer='he_normal', activation='relu' )( x )
+    x= l.MaxPooling2D( pool_size=(2,2) )( x )
+    x= l.Dropout( 0.25 )( x )
+    x= l.Flatten()( x )
+    x= l.Dense( 128, kernel_initializer='he_normal', activation='relu' )( x )
+    x= l.Dropout( 0.5 )( x )
+    x= l.Dense( 64, kernel_initializer='he_normal', activation='relu' )( x )
+    x= l.Dropout( 0.5 )( x )
+    x= l.Dense( 10, kernel_initializer='he_normal' )( x )
+    model= models.Model( inputs=x0, outputs=x )
     model.compile( loss='mse', metrics=['accuracy'], optimizer=keras.optimizers.Adam( lr=0.01 ) )
     model.summary()
 
@@ -30,13 +35,12 @@ def test_train():
     (x_train,y_train),(x_test,y_test)= loader.getAll()
 
     model.fit( x_train, y_train, batch_size=32, epochs=2, verbose=1 )
-    model.save( 'py_mnist_keras.h5' )
-
+    model.save( 'python_mnist_tf_keras.h5' )
 
 
 def test_predict():
     BATCH_SIZE=64
-    model= keras.models.load_model( 'py_mnist_keras.h5' )
+    model= models.load_model( 'python_mnist_tf_keras.h5' )
 
     loader= mnist_loader.MNistLoader( '../mnist' )
     (x_train,y_train),(x_test,y_test)= loader.getAll()
@@ -57,12 +61,9 @@ def test_predict():
     print( score * 100.0 / (loop_count * BATCH_SIZE), '%' )
 
 
-
 def main():
     test_train()
     test_predict()
-
-
 
 if __name__=='__main__':
     main()
