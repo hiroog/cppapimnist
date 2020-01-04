@@ -19,7 +19,7 @@ def test_train():
             l.Convolution( (5,5), 16, pad=False, activation=cntk.relu ),
             l.MaxPooling( (2,2), strides=2 ),
             l.Dropout( 0.25 ),
-            l.Convolution( (5,5), 16, pad=False, activation=cntk.relu ),
+            l.Convolution( (5,5), 32, pad=False, activation=cntk.relu ),
             l.MaxPooling( (2,2), strides=2 ),
             l.Dropout( 0.25 ),
             l.Dense( 128, activation=cntk.relu ),
@@ -39,10 +39,10 @@ def test_train():
 
     EPOCH=2
     BATCH_SIZE=32
-    loop_count= len(x_test) // BATCH_SIZE
+    loop_count= len(x_train) // BATCH_SIZE
     for e in range(EPOCH):
         for i in range(loop_count):
-            rindex= np.random.randint( len(x_test), size=BATCH_SIZE )
+            rindex= np.random.randint( len(x_train), size=BATCH_SIZE )
             x_data= x_train[ rindex ]
             y_data= y_train[ rindex ]
             trainer.train_minibatch( { xinput: x_data, yinput: y_data } )

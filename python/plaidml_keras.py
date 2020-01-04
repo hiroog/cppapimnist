@@ -18,7 +18,7 @@ def test_train():
             l.Conv2D( 16, kernel_size=(5,5), activation='relu', input_shape=(1,28,28) ),
             l.MaxPooling2D( pool_size=(2,2) ),
             l.Dropout( 0.25 ),
-            l.Conv2D( 16, kernel_size=(5,5), activation='relu' ),
+            l.Conv2D( 32, kernel_size=(5,5), activation='relu' ),
             l.MaxPooling2D( pool_size=(2,2) ),
             l.Dropout( 0.25 ),
             l.Flatten(),

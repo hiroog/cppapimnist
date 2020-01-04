@@ -18,7 +18,7 @@ def test_train():
     model.add( l.Conv2D( 16, kernel_size=(5,5), activation='relu', input_shape=(1,28,28) ) )
     model.add( l.MaxPooling2D( pool_size=(2,2) ) )
     model.add( l.Dropout( 0.25 ) )
-    model.add( l.Conv2D( 16, kernel_size=(5,5), activation='relu' ) )
+    model.add( l.Conv2D( 32, kernel_size=(5,5), activation='relu' ) )
     model.add( l.MaxPooling2D( pool_size=(2,2) ) )
     model.add( l.Dropout( 0.25 ) )
     model.add( l.Flatten() )
