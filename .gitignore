@@ -14,3 +14,4 @@ mnist
 *.pyc
 __pycache__
 *.swp
+pytorch_python_dl.py
