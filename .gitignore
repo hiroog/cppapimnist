@@ -8,6 +8,7 @@ mnist
 *.dnn
 *.pb
 *.h5
+*.params
 .hg
 *.dll
 *.orig
