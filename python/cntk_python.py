@@ -8,6 +8,7 @@ import cntk
 from cntk import layers as l
 import numpy as np
 import mnist_loader
+import minitimer
 
 
 # channels_first + sequential API + softmaxcrossentropy
@@ -40,12 +41,13 @@ def test_train():
     EPOCH=2
     BATCH_SIZE=32
     loop_count= len(x_train) // BATCH_SIZE
-    for e in range(EPOCH):
-        for i in range(loop_count):
-            rindex= np.random.randint( len(x_train), size=BATCH_SIZE )
-            x_data= x_train[ rindex ]
-            y_data= y_train[ rindex ]
-            trainer.train_minibatch( { xinput: x_data, yinput: y_data } )
+    with minitimer.Timer( 'train ' ):
+        for e in range(EPOCH):
+            for i in range(loop_count):
+                rindex= np.random.randint( len(x_train), size=BATCH_SIZE )
+                x_data= x_train[ rindex ]
+                y_data= y_train[ rindex ]
+                trainer.train_minibatch( { xinput: x_data, yinput: y_data } )
 
     youtput.save( 'python_mnist_cntk_python.dnn' )
 
@@ -59,17 +61,18 @@ def test_predict():
 
     loop_count= len(x_test) // BATCH_SIZE
 
-    score= 0
-    for i in range(loop_count):
-        rand_index= np.random.randint( len(x_test), size=BATCH_SIZE )
-        x_data= x_test[rand_index]
-        y_data= y_test[rand_index]
-        result= model.eval( { 'xinput': x_data } )
-        for ba,bb in zip(result,y_data):
-            ra= np.argmax( ba )
-            rb= np.argmax( bb )
-            if ra == rb:
-                score+= 1
+    with minitimer.Timer( 'predict ' ):
+        score= 0
+        for i in range(loop_count):
+            rand_index= np.random.randint( len(x_test), size=BATCH_SIZE )
+            x_data= x_test[rand_index]
+            y_data= y_test[rand_index]
+            result= model.eval( { 'xinput': x_data } )
+            for ba,bb in zip(result,y_data):
+                ra= np.argmax( ba )
+                rb= np.argmax( bb )
+                if ra == rb:
+                    score+= 1
     print( score * 100.0 / (loop_count * BATCH_SIZE), '%' )
 
 

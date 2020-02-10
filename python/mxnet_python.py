@@ -6,6 +6,7 @@ from mxnet.gluon import nn as l
 from mxnet import autograd
 import numpy as np
 import mnist_loader
+import minitimer
 
 
 def def_model():
@@ -41,19 +42,20 @@ def test_train():
     optimizer= mxnet.gluon.Trainer( model.collect_params(), 'adam', { 'learning_rate': 0.001 } )
     loss_func= mxnet.gluon.loss.HuberLoss()
 
-    for ei in range(EPOCH):
-        total_loss= 0.0
-        for di in range(loop_count):
-            rindex= np.random.randint( len(x_train), size=BATCH_SIZE )
-            x_data= mxnet.nd.array( x_train[ rindex ] ).as_in_context( device )
-            y_data= mxnet.nd.array( y_train[ rindex ] ).as_in_context( device )
-            with autograd.record():
-                outputs= model( x_data )
-                loss= loss_func( outputs, y_data )
-                loss.backward()
-            optimizer.step( x_data.shape[0] )
-            total_loss+= loss[0].asscalar()
-        print( ei, 'loss=', total_loss / loop_count )
+    with minitimer.Timer( 'train ' ):
+        for ei in range(EPOCH):
+            total_loss= 0.0
+            for di in range(loop_count):
+                rindex= np.random.randint( len(x_train), size=BATCH_SIZE )
+                x_data= mxnet.nd.array( x_train[ rindex ] ).as_in_context( device )
+                y_data= mxnet.nd.array( y_train[ rindex ] ).as_in_context( device )
+                with autograd.record():
+                    outputs= model( x_data )
+                    loss= loss_func( outputs, y_data )
+                    loss.backward()
+                optimizer.step( x_data.shape[0] )
+                total_loss+= loss[0].asscalar()
+            print( ei, 'loss=', total_loss / loop_count )
 
     model.save_parameters( 'python_mnist_mxnet_python.params' )
 
@@ -70,17 +72,18 @@ def test_predict():
     model= def_model()
     model.load_parameters( 'python_mnist_mxnet_python.params', ctx=device )
 
-    score= 0
-    for i in range(loop_count):
-        rand_index= np.random.randint( len(x_test), size=BATCH_SIZE )
-        x_data= mxnet.nd.array( x_test[rand_index] ).as_in_context( device )
-        y_data= y_test[rand_index]
-        result= model( x_data ).asnumpy()
-        for ba,bb in zip(result,y_data):
-            ra= np.argmax( ba )
-            rb= np.argmax( bb )
-            if ra == rb:
-                score+= 1
+    with minitimer.Timer( 'predict ' ):
+        score= 0
+        for i in range(loop_count):
+            rand_index= np.random.randint( len(x_test), size=BATCH_SIZE )
+            x_data= mxnet.nd.array( x_test[rand_index] ).as_in_context( device )
+            y_data= y_test[rand_index]
+            result= model( x_data ).asnumpy()
+            for ba,bb in zip(result,y_data):
+                ra= np.argmax( ba )
+                rb= np.argmax( bb )
+                if ra == rb:
+                    score+= 1
     print( score * 100.0 / (loop_count * BATCH_SIZE), '%' )
 
 

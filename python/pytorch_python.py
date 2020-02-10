@@ -6,6 +6,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 import mnist_loader
+import minitimer
 
 
 class Model_MNist( nn.Module ):
@@ -53,21 +54,22 @@ def test_train():
     optimizer= torch.optim.Adam( model.parameters(), lr=0.001 )
     loss_func= nn.MSELoss()
 
-    model.train()
-    for ei in range(EPOCH):
-        total_loss= 0.0
-        for di in range(loop_count):
-            rindex= np.random.randint( len(x_train), size=BATCH_SIZE )
-            x_data= torch.tensor( x_train[ rindex ], dtype=torch.float32, device=device )
-            y_data= torch.tensor( y_train[ rindex ], dtype=torch.float32, device=device )
+    with minitimer.Timer( 'train ' ):
+        model.train()
+        for ei in range(EPOCH):
+            total_loss= 0.0
+            for di in range(loop_count):
+                rindex= np.random.randint( len(x_train), size=BATCH_SIZE )
+                x_data= torch.tensor( x_train[ rindex ], dtype=torch.float32, device=device )
+                y_data= torch.tensor( y_train[ rindex ], dtype=torch.float32, device=device )
 
-            optimizer.zero_grad()
-            outputs= model( x_data )
-            loss= loss_func( outputs, y_data )
-            loss.backward()
-            optimizer.step()
-            total_loss+= loss.item()
-        print( ei, 'loss=', total_loss / loop_count )
+                optimizer.zero_grad()
+                outputs= model( x_data )
+                loss= loss_func( outputs, y_data )
+                loss.backward()
+                optimizer.step()
+                total_loss+= loss.item()
+            print( ei, 'loss=', total_loss / loop_count )
 
     torch.save( model.state_dict(), 'python_mnist_pytorch_python.pt' )
 
@@ -86,19 +88,20 @@ def test_predict():
 
     model.load_state_dict( torch.load( 'python_mnist_pytorch_python.pt' ) )
 
-    model.eval()
-    score= 0
-    for di in range(loop_count):
-        rand_index= np.random.randint( len(x_test), size=BATCH_SIZE )
-        x_data= torch.tensor( x_test[rand_index], dtype=torch.float32, device=device )
-        y_data= y_test[rand_index]
-        outputs= model( x_data )
-        outputs_c= outputs.to( 'cpu' ).detach().numpy()
-        for ba,bb in zip(outputs_c,y_data):
-            ra= np.argmax( ba )
-            rb= np.argmax( bb )
-            if ra == rb:
-                score+= 1
+    with minitimer.Timer( 'predict ' ):
+        model.eval()
+        score= 0
+        for di in range(loop_count):
+            rand_index= np.random.randint( len(x_test), size=BATCH_SIZE )
+            x_data= torch.tensor( x_test[rand_index], dtype=torch.float32, device=device )
+            y_data= y_test[rand_index]
+            outputs= model( x_data )
+            outputs_c= outputs.to( 'cpu' ).detach().numpy()
+            for ba,bb in zip(outputs_c,y_data):
+                ra= np.argmax( ba )
+                rb= np.argmax( bb )
+                if ra == rb:
+                    score+= 1
     print( score * 100.0 / (loop_count * BATCH_SIZE), '%' )
 
 
