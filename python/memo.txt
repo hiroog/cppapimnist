@@ -1,0 +1,16 @@
+Windows10: RTX2070SUPER
+mxnet		12.98	0.27
+mxnet-keras	11.43	0.20
+pytorch		25.73	0.19
+cntk-keras	16.49	0.19
+cntk		 7.49	0.13
+plaidml-cl	27.46	1.36
+tensorflow-k	 9.81	2.74
+
+Ubuntu18.04: GTX1080
+pytorch		9.24	0.11
+mxnet		9.38	0.19
+mxnet-keras	8.39	0.16
+tensorflow-k	9.29	2.05
+
+
