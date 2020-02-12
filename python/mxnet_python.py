@@ -40,7 +40,7 @@ def test_train():
     model.collect_params().initialize( mxnet.init.Xavier(), ctx=device )
 
     optimizer= mxnet.gluon.Trainer( model.collect_params(), 'adam', { 'learning_rate': 0.001 } )
-    loss_func= mxnet.gluon.loss.HuberLoss()
+    loss_func= mxnet.gluon.loss.L2Loss()
 
     with minitimer.Timer( 'train ' ):
         for ei in range(EPOCH):
