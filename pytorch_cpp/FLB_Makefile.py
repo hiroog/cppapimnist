@@ -27,8 +27,8 @@ if ENABLE_CUDA:
     env.addLibraries( [ 'caffe2_nvrtc', 'c10_cuda', ] )
 if ENABLE_HIP:
     env.addLibraries( [ 'c10_hip', 'torch_hip', ] )
-    if env.getHostPlatform() == 'Linux':
-        env.addLibraries( [ 'torch_cpu', ] )
+if env.getHostPlatform() == 'Linux':
+    env.addLibraries( [ 'torch_cpu', ] )
 
 env.addIncludePaths( [
             os.path.join(torch,'include'),

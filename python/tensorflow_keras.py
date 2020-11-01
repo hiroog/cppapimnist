@@ -12,7 +12,9 @@ import mnist_loader
 import minitimer
 
 
+# ==============
 # channels_first + functional API + mse
+# ==============
 
 def test_train():
     x0= l.Input( shape=(1,28,28) )
