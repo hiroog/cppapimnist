@@ -1,5 +1,6 @@
 bin
 bindbg
+bin_d
 Debug
 Release
 mnist
