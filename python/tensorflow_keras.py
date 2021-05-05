@@ -18,11 +18,11 @@ import minitimer
 
 def test_train():
     x0= l.Input( shape=(1,28,28) )
-    x= l.Conv2D( 16, (5,5), kernel_initializer='he_normal', activation='relu' )( x0 )
-    x= l.MaxPooling2D( pool_size=(2,2) )( x )
+    x= l.Conv2D( 16, (5,5), kernel_initializer='he_normal', activation='relu', data_format='channels_first' )( x0 )
+    x= l.MaxPooling2D( pool_size=(2,2), data_format='channels_first' )( x )
     x= l.Dropout( 0.25 )( x )
-    x= l.Conv2D( 32, (5,5), kernel_initializer='he_normal', activation='relu' )( x )
-    x= l.MaxPooling2D( pool_size=(2,2) )( x )
+    x= l.Conv2D( 32, (5,5), kernel_initializer='he_normal', activation='relu', data_format='channels_first' )( x )
+    x= l.MaxPooling2D( pool_size=(2,2), data_format='channels_first' )( x )
     x= l.Dropout( 0.25 )( x )
     x= l.Flatten()( x )
     x= l.Dense( 128, kernel_initializer='he_normal', activation='relu' )( x )
