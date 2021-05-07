@@ -65,14 +65,13 @@ static void	torch_test_train()
 	std::mt19937	engine( seed() );
 	std::uniform_int_distribution<int>	rand(0,DATA_COUNT-1);
 
-
-	MNistLoader	loader( "../mnist" );
-
-#if _DEBUG
-	torch::Device	device= torch::kCPU;
+#if defined(VS_PROJECT)
+	MNistLoader	loader( "../../mnist" );
 #else
-	torch::Device	device= torch::cuda::is_available() ? torch::kCUDA : torch::kCPU;
+	MNistLoader	loader( "../mnist" );
 #endif
+
+	torch::Device	device= torch::cuda::is_available() ? torch::kCUDA : torch::kCPU;
 	Model_MNist	model;
 	model->to( device );
 	torch::optim::Adam	optimizer( model->parameters(), torch::optim::AdamOptions( 0.001 ) );
@@ -121,13 +120,13 @@ static void	torch_test_predict()
 	constexpr int	DATA_COUNT= MNistLoader::TESTDATA_SIZE;;
 	constexpr int	loop_count= DATA_COUNT / BATCH_SIZE;
 
-	MNistLoader	loader( "../mnist" );
-
-#if _DEBUG
-	torch::Device	device= torch::kCPU;
+#if defined(VS_PROJECT)
+	MNistLoader	loader( "../../mnist" );
 #else
-	torch::Device	device= torch::cuda::is_available() ? torch::kCUDA : torch::kCPU;
+	MNistLoader	loader( "../mnist" );
 #endif
+
+	torch::Device	device= torch::cuda::is_available() ? torch::kCUDA : torch::kCPU;
 	Model_MNist	model;
 	model->to( device );
 
